@@ -22,3 +22,4 @@ app.get('/', async function (req,res){
     res.send("Hello Wordl This is an api try /api/users")
 });
 
+
