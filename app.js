@@ -19,6 +19,6 @@ app.use('/api/users', require('./routes/api/users'))
 
 
 app.get('/', async function (req,res){
-    res.setHeader("Hello Wordl This is an api try /api/users")
+    res.send("Hello Wordl This is an api try /api/users")
 });
 
