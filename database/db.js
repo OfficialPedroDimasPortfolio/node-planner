@@ -5,6 +5,8 @@ const user = process.env.DB_USER;
 const pwd = process.env.DB_PWD;
 const dbname = process.env.DB_NAME;
 
+console.log("HELLLLOOOOO" + host + user + pwd + dbname)
+
 var pool = mariadb.createPool({
     host:host,
     user:user,
