@@ -1,5 +1,5 @@
 const express = require('express');
-const path = require('path');
+const mariadb = require('./database/db');
 
 //init express and set port
 const app = express();
@@ -9,16 +9,16 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-//Set Static folder
-//app.use(express.static(path.join(__dirname,'public')))
-app.get('/', (req,res)=>{
-   res.send(process.env.DB_HOST+ " " + process.env.DB_USER + " " + process.env.DB_PWD + " " + process.env.DB_NAME);
-});
-//members api routes
-app.use('/api/members', require('./routes/api/members'))
-
 //app is listening
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+
+//members api routes
+app.use('/api/users', require('./routes/api/users'))
+
+
+app.get('/', async function (req,res){
+    res.setHeader("Hello Wordl This is an api try /api/users")
+});
 
