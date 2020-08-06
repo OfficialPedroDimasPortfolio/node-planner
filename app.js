@@ -7,10 +7,10 @@ app.get('/',(req,res) => {
 
 });
 
-const port = 8080;
+const port = process.env.port || 8080;
 app.listen(port,()=>{
 
-    console.log("Hello!");
+    console.log("Hello");
 
 });
 
