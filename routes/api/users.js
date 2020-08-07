@@ -21,7 +21,7 @@ router.get('/',async (req,res) => {
 //Get single member
 router.get('/:email',async (req,res) =>{
     try{
-        let user = await db.getUser(req.params.email)[0];
+        let user = await db.getUser(req.params.email);
         console.log(user);
         if (user == null){
             return res.status(400).json({error:'Not a Valid Email'})
@@ -128,6 +128,4 @@ router.post('/verify', async (req,res) =>{
     }
 });
 */
-
-
 module.exports = router;
