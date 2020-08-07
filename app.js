@@ -1,5 +1,4 @@
 const express = require('express');
-const mariadb = require('./database/db');
 
 //init express and set port
 const app = express();
@@ -11,15 +10,17 @@ app.use(express.urlencoded({extended: false}));
 
 //app is listening
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`Example app listening at http://localhost:${port}`);
 })
 
 //members api routes
-app.use('/api/users', require('./routes/api/users'))
+app.use('/api/users', require('./routes/api/users'));
+app.use('/api/posts', require('./routes/api/posts'));
+app.use('/api/events', require('./routes/api/events'));
 
 
 app.get('/', async function (req,res){
-    res.send("Hello Wordl This is an api try /api/users")
+    res.send("Hello Wordl This is an api try /api/users");
 });
 
 

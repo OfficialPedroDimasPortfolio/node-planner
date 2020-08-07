@@ -22,8 +22,7 @@ router.get('/',async (req,res) => {
 router.get('/:email',async (req,res) =>{
     try{
         let user = await db.getUser(req.params.email);
-        console.log(user);
-        if (user == null){
+        if (user[0] == null){
             return res.status(400).json({error:'Not a Valid Email'})
         }
         res.json(user);
