@@ -1,49 +1,41 @@
 const express = require('express');
-const mariadb = require('../../database/db');
+const db = require('../../database/db');
 const bcrypt = require('bcryptjs');
 
 const router = express.Router();
 
 //Get all members
 router.get('/',async (req,res) => {
-    var users = await getUsers();
-    res.json(users);
+
+    try{
+        let users = await db.getUsers();
+        res.json(users);
+    }catch (err){
+        console.log(err);
+        res.status(500);
+    }
+
+
 });
 
 //Get single member
 router.get('/:email',async (req,res) =>{
-    var user = await getUser(req.params.email);
-
-    if (user.msg){
-        return res.status(user.msg).json({error:'Not a Valid Email'})
-    }
-    res.json(user);
-});
-
-//Validate a User
-router.post('/verify', async (req,res) =>{
-    if(!req.body.email || !req.body.password){
-        return res.status(400).json({msg:"Please include name, emailand password"});
-    }
-
-    const user = {
-        email: req.body.email,
-        password: req.body.password
-    }
-
-    var valid = await verifyUser(user);
-    console.log(valid);
-    if (valid.status === 400){
-        return res.status(406).json({msg:'invalid User or password'});
-    }
-    else {
-        return res.json({msg:'valid'});
+    try{
+        let user = await db.getUser(req.params.email)[0];
+        console.log(user);
+        if (user == null){
+            return res.status(400).json({error:'Not a Valid Email'})
+        }
+        res.json(user);
+    }catch (err){
+        console.log(err);
+        res.status(500);
     }
 
 
 });
 
-//Create Member
+//Create User
 //{
 //     "username":"user",
 //     "name": "name name ",
@@ -53,7 +45,7 @@ router.post('/verify', async (req,res) =>{
 router.post('/', async (req,res) => {
 
     if(!req.body.username || !req.body.email || !req.body.password){
-         return res.status(400).json({msg:"Please include name, emailand password"});
+        return res.status(400).json({msg:"Please include name, emailand password"});
     }
 
     let hashedPassword;
@@ -71,10 +63,46 @@ router.post('/', async (req,res) => {
         password: hashedPassword
     }
 
-    var query = await addUser(newUser);
-    res.json(query);
+    try{
+        let changes = await db.addUser(newUser);
+        console.log(changes);
+        /*if (user == null){
+            return res.status(400).json({error:'Not a Valid Email'})
+        }*/
+        res.json(changes);
+    }catch (err){
+        console.log(err);
+        res.status(500).json({error:'Not a Valid Email or Username'});
+    }
 
-})
+});
+
+//Validate a User
+router.post('/verify', async (req,res) =>{
+    if(!req.body.email || !req.body.password){
+        return res.status(400).json({msg:"Please include name, emailand password"});
+    }
+
+    const user = {
+        email: req.body.email,
+        password: req.body.password
+    }
+
+    try{
+        let result = await db.getPassword(user);
+        console.log(result);
+        if (await bcrypt.compare(user.password, result[0].user_password)){
+            return res.json({msg:'valid'});
+        }else {
+            return res.status(406).json({msg:'invalid User or password'});
+        }
+    }catch(err){
+        console.log();
+        res.status(500).json({error:'Not a Valid Email or or password'});
+    }
+});
+
+
 
 //Update Member TODO this method
 /*router.put('/:id',(req,res) =>{
@@ -100,81 +128,6 @@ router.post('/', async (req,res) => {
     }
 });
 */
-
-
-async function getUsers(){
-    try{
-        let conn = await mariadb.getConn();
-
-        const rows = await conn.query("SELECT user_username, user_name, user_email FROM users;");
-
-        conn.end();
-
-        return(rows);
-    }catch(err){
-        console.log("Error")
-    }
-}
-
-async function getUser(email){
-    try{
-        let conn = await mariadb.getConn();
-
-        const rows = await conn.query("SELECT user_username, user_name, user_email FROM users WHERE user_email='"+ email +"';" );
-
-        await conn.end();
-
-        return(rows);
-    }catch(err){
-        console.log("Error in getUser")
-        return ({
-            msg:400
-        })
-    }
-}
-
-async function addUser(user){
-    try{
-        let conn = await mariadb.getConn();
-
-        var query = "INSERT INTO users(user_username, user_name, user_email, user_password) VALUES ('" + user.username + "','" + user.name+ "','" +user.email + "','"+ user.password +"')" + ";";
-        const rows = await conn.query(query);
-
-        conn.end();
-
-        return(rows);
-    }catch(err){
-        console.log("Error adding user");
-    }
-}
-
-//recieves a simpleuser only {
-// email:email@example.com,
-// password:plainTextpasswordTocheck
-// }
-async function verifyUser(user){
-    try{
-        let conn = await mariadb.getConn();
-        var query = "SELECT user_password FROM users WHERE user_email='"+ user.email +"';" ;
-        const rows = await conn.query(query);
-        conn.end();
-        if (await bcrypt.compare(user.password, rows[0].user_password)){
-            return ({
-                status:200
-            })
-        }
-
-        return ({
-            status:400
-        })
-    }catch(err){
-        console.log("Error in userVerification");
-        return ({
-            msg:400
-        })
-    }
-}
-
 
 
 module.exports = router;
