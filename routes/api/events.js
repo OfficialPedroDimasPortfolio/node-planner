@@ -44,8 +44,6 @@ router.post('/', async (req,res) => {
         return res.status(400).json({msg:"Please include title, description and creator email"});
     }
 
-    let creator
-
     try{
         let id = await db.getUserId(req.body.creator);
 
@@ -111,6 +109,10 @@ router.get('/attendees/:id', async (req,res) =>{
 router.post('/attend', async (req,res) =>{
     const uid = req.query.uid;
     const eid = req.query.eid;
+
+    if (eid == undefined || uid == undefined){
+        return res.status(400).json({msg:"Send user id and event id as query params"});
+    }
 
     try{
         let response = await db.attend(eid,uid);

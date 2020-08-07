@@ -185,4 +185,86 @@ db.attend = (e_id, u_id) =>{
     });
 }
 
+//POSTS
+
+db.getPost = (id) => {
+    let sql = "select pst_title, pst_body, user_username from posts join users u on u.user_id = posts.pst_user_id where pst_id = '"+ id +"';"
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+}
+
+db.getPostsFromEvent = (id) => {
+    let sql = "select pst_title, pst_body, user_username from posts join users u on u.user_id = posts.pst_user_id where pst_event_id = '"+ id +"';"
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+}
+
+db.getPostsFromUser = (id) => {
+    let sql = "select pst_title, pst_body, user_username from posts join users u on u.user_id = posts.pst_user_id where pst_user_id = '"+ id +"';"
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+}
+
+db.getPostFromUserInEvent = (uid,eid) => {
+    let sql = "select pst_title, pst_body, user_username from posts join users u on u.user_id = posts.pst_user_id where pst_user_id = '"+ uid +"' and pst_event_id = '"+ eid +"';"
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+}
+
+//{
+//     "title":"title",
+//     "body": "Hello ",
+//     "eventId":"id",
+//     "uid":"user id"
+// }
+db.addPost = (post) =>{
+    let sql = "INSERT INTO posts(pst_title, pst_body, pst_event_id, pst_user_id) VALUES ('" + post.title + "','" + post.body+ "','" + post.eventId + "','" + post.uid+"')" + ";";
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+
+};
+
+db.deletePost = (id) =>{
+    let sql = "DELETE FROM posts WHERE pst_id = '" + id + "';";
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err,result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+
+}
+
 module.exports = db;
