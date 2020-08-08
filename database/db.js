@@ -33,7 +33,7 @@ db.getUsers = () =>{
 };
 
 db.getUser = (email) =>{
-    let sql = "SELECT user_id, user_username, user_name, user_email FROM users WHERE user_email='"+ email +"';" ;
+    let sql = "SELECT user_username, user_name, user_email FROM users WHERE user_email='"+ email +"';" ;
     return new Promise((resolve, reject) => {
         pool.query(sql, (err,result) => {
             if (err) {
