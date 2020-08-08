@@ -104,7 +104,7 @@ db.getEvents = () =>{
 };
 
 db.getEvent = (id) =>{
-    let sql = "SELECT event_id, event_title, event_description FROM events WHERE event_id='"+ id +"';";
+    let sql = "SELECT event_title, event_description FROM events WHERE event_id='"+ id +"';";
     return new Promise((resolve, reject) => {
         pool.query(sql, (err,result) => {
             if (err) {
@@ -149,7 +149,7 @@ db.addEvent = (event) =>{
 };
 
 db.getEventsAttendedBy = (id) =>{
-    let sql = "select event_title from events join participation p on events.event_id = p.p_event_id and p.p_user_id = '" + id +"';";
+    let sql = "select event_id, event_title from events join participation p on events.event_id = p.p_event_id and p.p_user_id = '" + id +"';";
     return new Promise((resolve, reject) => {
         pool.query(sql, (err,result) => {
             if (err) {
