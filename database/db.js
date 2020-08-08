@@ -104,7 +104,7 @@ db.getEvents = () =>{
 };
 
 db.getEvent = (id) =>{
-    let sql = "SELECT event_title, event_description FROM events WHERE event_id='"+ id +"';";
+    let sql = "SELECT event_id, event_title, event_description FROM events WHERE event_id='"+ id +"';";
     return new Promise((resolve, reject) => {
         pool.query(sql, (err,result) => {
             if (err) {
