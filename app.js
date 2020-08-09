@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 
 //init express and set port
 const app = express();
 const port = process.env.PORT || 8080;
 
 //init body parser midleware
+app.use(cors);
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
